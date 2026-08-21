@@ -26,4 +26,3 @@ https://raw.githubusercontent.com/AgiosAndreas/codex-self-improvement-loop/main/
    Если в этом job валидатор лежит в другом месте, найди именно `quick_validate.py` внутри `<CODEX_HOME>/skills/.system/skill-creator/` и используй его.
 8. Не изменяй `CODEX_MEMORY.md`, `AGENTS.md`, историю сессий, `auth.json`, `.hermes` или другие skills. Не добавляй credentials и не публикуй содержимое локальной памяти.
 9. В конце сообщи: установленный абсолютный путь, список установленных файлов, результат validator и требуется ли перезапуск/reload Codex.
-
