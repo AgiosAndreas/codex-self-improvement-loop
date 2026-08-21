@@ -1,48 +1,29 @@
-# Переносимый пакет `self-improvement-loop`
+Установи переносимый Codex skill `self-improvement-loop` из публичного GitHub bundle:
 
-Пакет переносит только сам Codex skill: инструкции, справочник Hermes, метаданные интерфейса и безопасный установщик. Он намеренно не содержит память пользователя, историю сессий, `auth.json`, `.hermes`, токены или другие skills.
+https://raw.githubusercontent.com/AgiosAndreas/codex-self-improvement-loop/main/self-improvement-loop-transfer.zip
 
-## Самый простой способ
+Checksum SHA-256:
 
-В новом Codex отправьте содержимое [INSTALL_PROMPT.md](INSTALL_PROMPT.md). Prompt скачает bundle из GitHub, проверит SHA-256, установит skill и не будет менять память.
+https://raw.githubusercontent.com/AgiosAndreas/codex-self-improvement-loop/main/self-improvement-loop-transfer.sha256
 
-### Установка через prompt
+Сделай это как установку skill, а не как запрос на изменение памяти.
 
-1. Откройте [INSTALL_PROMPT.md](INSTALL_PROMPT.md) в этом репозитории.
-2. Скопируйте весь текст файла.
-3. На другом компьютере вставьте текст в новый Codex и отправьте одним сообщением.
-4. Codex сам скачает ZIP и checksum из интернета, проверит файл, установит skill в `<CODEX_HOME>/skills` и запустит validator.
+Требования:
 
-Никакие файлы, флешки или ручное копирование каталога на другой компьютер не нужны. Если skill уже установлен, prompt остановится и не перезапишет его.
+1. Определи фактический `<CODEX_HOME>` текущего job; используй `<CODEX_HOME>/skills`, а если переменная не задана — `~/.codex/skills`.
+2. Скачай оба URL во временный каталог через `curl -fL`. Проверь SHA-256 ZIP по checksum-файлу; при несовпадении остановись и ничего не устанавливай.
+3. Распакуй ZIP и прочитай `README.md` и `SKILL.md`. Внутри архива должен быть каталог `self-improvement-loop-transfer` с единственным `SKILL.md`.
+4. Перед копированием выполни dry-run установщика на распакованном каталоге:
 
-## Установка из терминала
+   `python3 <bundle>/scripts/install_from_gist.py --source <bundle> --dest <CODEX_HOME>/skills --dry-run`
 
-Из интернета:
+5. Если `<CODEX_HOME>/skills/self-improvement-loop` уже существует, остановись и сообщи об этом. Не перезаписывай и не удаляй локальную версию без отдельного разрешения.
+6. Если destination свободен, выполни ту же команду без `--dry-run`.
+7. Проверь установленный каталог валидатором Codex:
 
-```bash
-bundle_tmp="$(mktemp -d -t self-improvement-loop.XXXXXX)"
-curl -fL https://raw.githubusercontent.com/AgiosAndreas/codex-self-improvement-loop/main/self-improvement-loop-transfer.zip \
-  -o "$bundle_tmp/self-improvement-loop-transfer.zip"
-unzip -q "$bundle_tmp/self-improvement-loop-transfer.zip" -d "$bundle_tmp"
-python3 "$bundle_tmp/self-improvement-loop-transfer/scripts/install_from_gist.py" \
-  --source "$bundle_tmp/self-improvement-loop-transfer"
-```
+   `/usr/bin/python3 <CODEX_HOME>/skills/.system/skill-creator/scripts/quick_validate.py <CODEX_HOME>/skills/self-improvement-loop`
 
-Если ZIP уже скачан:
+   Если в этом job валидатор лежит в другом месте, найди именно `quick_validate.py` внутри `<CODEX_HOME>/skills/.system/skill-creator/` и используй его.
+8. Не изменяй `CODEX_MEMORY.md`, `AGENTS.md`, историю сессий, `auth.json`, `.hermes` или другие skills. Не добавляй credentials и не публикуй содержимое локальной памяти.
+9. В конце сообщи: установленный абсолютный путь, список установленных файлов, результат validator и требуется ли перезапуск/reload Codex.
 
-```bash
-bundle_tmp="$(mktemp -d -t self-improvement-loop.XXXXXX)"
-unzip -q self-improvement-loop-transfer.zip -d "$bundle_tmp"
-python3 "$bundle_tmp/self-improvement-loop-transfer/scripts/install_from_gist.py" \
-  --source "$bundle_tmp/self-improvement-loop-transfer"
-```
-
-По умолчанию skill попадёт в `<CODEX_HOME>/skills` или `~/.codex/skills`. Для отдельного job укажите его skills-root через `--dest`.
-
-После установки перезапустите Codex или перезагрузите skills. Установщик откажется перезаписывать уже существующий `self-improvement-loop`; это преднамеренная защита от потери локальной версии.
-
-## Что нужно передавать другому человеку
-
-Самый надёжный комплект — ссылка на GitHub и prompt из `INSTALL_PROMPT.md`. ZIP остаётся доступным как резервный офлайн-артефакт.
-
-Публичный источник: <https://github.com/AgiosAndreas/codex-self-improvement-loop>
